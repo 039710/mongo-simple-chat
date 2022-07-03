@@ -11,22 +11,19 @@ export default {
       const validation = makeValidation(types => ({
         payload: req.body,
         checks: {
-          userIds: {
-            type: types.array,
-            options: { unique: true, empty: false, stringOnly: true }
-          },
           type: { type: types.enum, options: { enum: CHAT_ROOM_TYPES } },
         }
       }));
       if (!validation.success) return res.status(400).json({ ...validation });
-      const { userIds, type } = req.body;
+      const { userIds, type,chatRoomId,name } = req.body;
 
       const { userId: chatInitiator } = req;
       const allUserIds = [...userIds, chatInitiator];
-      const chatRoom = await ChatRoomModel.initiateChat(allUserIds, type, chatInitiator);
+      console.log(chatRoomId,'<<')
+      const chatRoom = await ChatRoomModel.initiateChat(allUserIds, type, chatInitiator,chatRoomId,name);
       return res.status(200).json({ success: true, chatRoom });
     } catch (error) {
-      return res.status(500).json({ success: false, error: error })
+      return res.status(500).json({ success: false, error: error.message })
     }
   },
   postMessage: async (req, res) => {
@@ -49,7 +46,7 @@ export default {
       return res.status(200).json({ success: true, post });
     } catch (error) {
       console.log(error)
-      return res.status(500).json({ success: false, error: error })
+      return res.status(500).json({ success: false, error: error.message })
     }
   },
   getRecentConversation: async (req, res) => {
@@ -66,7 +63,7 @@ export default {
       );
       return res.status(200).json({ success: true, conversation: recentConversation });
     } catch (error) {
-      return res.status(500).json({ success: false, error: error })
+      return res.status(500).json({ success: false, error: error.message })
     }
   },
   getConversationByRoomId: async (req, res) => {
@@ -119,6 +116,7 @@ export default {
     try {
       const currentLoggedUser = req.userId;
       const rooms = await ChatRoomModel.getAllRoomsByUser(currentLoggedUser);
+      // console.log(rooms)
       return res.status(200).json({ success: true, rooms });
     } catch (error) {
       console.log(error)

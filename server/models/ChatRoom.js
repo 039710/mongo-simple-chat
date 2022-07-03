@@ -16,9 +16,16 @@ const chatRoomSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    userIds: Array,
+    userIds: {
+      type: [String],
+      default : []
+    },
     type: String,
     chatInitiator: String,
+    chatRoomId :{
+      type: String,
+      default: null,
+    }
   },
   {
     timestamps: true,
@@ -54,10 +61,26 @@ chatRoomSchema.statics.getChatRoomByRoomId = async function (roomId) {
 
 chatRoomSchema.statics.getAllRoomsByUser = async function (userId) {
   try {
-    const rooms = await this.find({ userIds: { $all: [userId] } });
-    return rooms;
+    let rooms = await this.find({ userIds: { $all: [userId] }});
+    let parents = []
+    rooms = rooms.map(async (room) => {
+        let currentId = room._doc._id;
+        let childs = await this.find({ userIds : { $all : [userId] }, chatRoomId : currentId });
+        room._doc.subRooms = childs;
+        parents.forEach(parent=>{
+          if(parent._doc._id === room._doc.chatRoomId){
+            parent._doc.subRooms.push(room);
+          }
+        })
+      if (childs.length > 0) parents.push(room);
+    });    
+    // resolve all promises
+    rooms = await Promise.all(rooms);
+    // remove null
+    rooms = rooms.filter(room => room);
+    return parents;
   } catch (error) {
-    throw error;
+    throw error.message;
   }
 }
 
@@ -67,25 +90,34 @@ chatRoomSchema.statics.getAllRoomsByUser = async function (userId) {
  * @param {String} chatInitiator - user who initiated the chat
  * @param {CHAT_ROOM_TYPES} type
  */
-chatRoomSchema.statics.initiateChat = async function (userIds, type, chatInitiator) {
+chatRoomSchema.statics.initiateChat = async function (userIds, type, chatInitiator, chatRoomId,name) {
   try {
     const availableRoom = await this.findOne({
-      userIds: {
-        $size: userIds.length,
-        $all: [...userIds],
-      },
-      type,
+      name
     });
     if (availableRoom) {
       return {
         isNew: false,
-        message: 'retrieving an old chat room',
+        message: 'retrieving an old chat room, room already exist',
         chatRoomId: availableRoom._doc._id,
         type: availableRoom._doc.type,
       };
     }
+    // if its recursive room with chatRoomId
+    let newRoom = null;
+    if(chatRoomId){
+      const parentRoom = await this.findOne({
+        id : chatRoomId,
+      })
+      
+      if(!parentRoom) throw new Error('parent room not found')
+      console.log({ userIds, type, chatInitiator, chatRoomId, name })
+      newRoom = await this.create({ userIds , type, chatInitiator, chatRoomId,name });    
+    }else{
+      // check if its belongs to other rooms
+      newRoom = await this.create({ userIds , type, chatInitiator, chatRoomId : null,name });
+    }
 
-    const newRoom = await this.create({ userIds, type, chatInitiator });
     return {
       isNew: true,
       message: 'creating a new chatroom',
