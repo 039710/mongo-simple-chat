@@ -1,0 +1,49 @@
+[{
+  "_id": "0bccac08ba274abf9db6d7589dd70c8e",
+  "name": "Software Dev",
+  "userIds": [
+    "a1abfbb07fde406cbb1aa9524cb667f0"
+  ],
+  "type": "GROUP",
+  "chatInitiator": "a1abfbb07fde406cbb1aa9524cb667f0",
+  "chatRoomId": null,
+  "createdAt": {
+    "$date": "2022-07-04T06:04:05.442Z"
+  },
+  "updatedAt": {
+    "$date": "2022-07-04T06:04:05.442Z"
+  },
+  "__v": 0
+},{
+  "_id": "10fe8e8ba8074281906fff341e73c184",
+  "name": "Backend Dev",
+  "userIds": [
+    "a1abfbb07fde406cbb1aa9524cb667f0"
+  ],
+  "type": "GROUP",
+  "chatInitiator": "a1abfbb07fde406cbb1aa9524cb667f0",
+  "chatRoomId": "0bccac08ba274abf9db6d7589dd70c8e",
+  "createdAt": {
+    "$date": "2022-07-04T06:04:19.192Z"
+  },
+  "updatedAt": {
+    "$date": "2022-07-04T06:04:19.192Z"
+  },
+  "__v": 0
+},{
+  "_id": "5ee0847076a546b28089f0fbe93bea18",
+  "name": "Frontend Dev",
+  "userIds": [
+    "a1abfbb07fde406cbb1aa9524cb667f0"
+  ],
+  "type": "GROUP",
+  "chatInitiator": "a1abfbb07fde406cbb1aa9524cb667f0",
+  "chatRoomId": "0bccac08ba274abf9db6d7589dd70c8e",
+  "createdAt": {
+    "$date": "2022-07-04T06:04:21.876Z"
+  },
+  "updatedAt": {
+    "$date": "2022-07-04T06:04:21.876Z"
+  },
+  "__v": 0
+}]

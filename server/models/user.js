@@ -38,8 +38,8 @@ userSchema.statics.createUser = async function (
     const checkEmail = await this.findOne({ email });
     if (checkEmail) throw ({ error: 'Email already exists' });
     const encodedPassword = await bcrypt.hash(password, 10);
-    const user = await this.create({ firstName, lastName, type, password:encodedPassword,email });
-    
+    const user = await this.create({ firstName, lastName, type, password: encodedPassword, email });
+    delete user._doc.password;
     return user;
   } catch (error) {
     throw error;

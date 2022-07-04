@@ -61,24 +61,19 @@ chatRoomSchema.statics.getChatRoomByRoomId = async function (roomId) {
 
 chatRoomSchema.statics.getAllRoomsByUser = async function (userId) {
   try {
-    let rooms = await this.find({ userIds: { $all: [userId] }});
-    let parents = []
-    rooms = rooms.map(async (room) => {
-        let currentId = room._doc._id;
-        let childs = await this.find({ userIds : { $all : [userId] }, chatRoomId : currentId });
-        room._doc.subRooms = childs;
-        parents.forEach(parent=>{
-          if(parent._doc._id === room._doc.chatRoomId){
-            parent._doc.subRooms.push(room);
-          }
-        })
-      if (childs.length > 0) parents.push(room);
-    });    
-    // resolve all promises
-    rooms = await Promise.all(rooms);
-    // remove null
-    rooms = rooms.filter(room => room);
-    return parents;
+    let parents = await this.find({ userIds: { $all: [userId] }, chatRoomId: null });
+    parents = parents.map(async (parent) => {
+      // console.log(parent._doc.userIds.includes(userId))
+      if (parent._doc.userIds.includes(userId)){
+        parent = parent._doc
+        let children = await this.find({ chatRoomId: parent._id, userIds: { $all: [userId] } });
+        parent.subRooms = children;
+        return parent;
+      }
+    });
+    let results = await Promise.allSettled(parents)
+    results = results.map(result => result.value)
+    return results;
   } catch (error) {
     throw error.message;
   }

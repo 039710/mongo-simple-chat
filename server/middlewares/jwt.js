@@ -15,6 +15,7 @@ export const encode = async (req, res, next) => {
     const authToken = jwt.sign(payload, SECRET_KEY);
     console.log('Auth', authToken, 'okey!');
     req.authToken = authToken;
+    req.user = user;
     next();
   } catch (error) {
     return res.status(400).json({ success: false, message: error.error });

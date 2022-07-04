@@ -11,6 +11,7 @@ router
       .json({
         success: true,
         authorization: req.authToken,
+        user : req.user
       });
   });
 

@@ -1,5 +1,8 @@
 class WebSockets {
-  users = [];
+  user = [];
+  constructor() {
+    this.user = [];
+  }
   connection(client) {
     // event fired when the chat room is disconnected
     client.on("disconnect", () => {
@@ -13,7 +16,9 @@ class WebSockets {
       });
     });
     // subscribe person to chat & other user as well
-    client.on("subscribe", (room, otherUserId = "") => {
+    client.on("subscribe", function (room, otherUserId = "") {
+      
+      
       this.subscribeOtherUser(room, otherUserId);
       client.join(room);
     });

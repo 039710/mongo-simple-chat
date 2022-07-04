@@ -1,0 +1,29 @@
+[{
+  "_id": "70ba20dac8d14d939c6216d53a3610b6",
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "john@mail.com",
+  "type": "consumer",
+  "password": "$2b$10$K4BFbxJ/zxq6GDlltOQ3Cum4RO6IHCJ4JgEtjVJoSqlGurnJOUMsa",
+  "createdAt": {
+    "$date": "2022-07-04T06:03:08.971Z"
+  },
+  "updatedAt": {
+    "$date": "2022-07-04T06:03:08.971Z"
+  },
+  "__v": 0
+},{
+  "_id": "16797d67b3954cdd81aa2e3b5070419d",
+  "firstName": "Jane",
+  "lastName": "Doe",
+  "email": "jane@mail.com",
+  "type": "consumer",
+  "password": "$2b$10$YkSX9ZdKD7YgqQw7BvrTNeaTKh9KchsnNQ63DX4I1K5ve/27aYpl.",
+  "createdAt": {
+    "$date": "2022-07-04T06:03:16.045Z"
+  },
+  "updatedAt": {
+    "$date": "2022-07-04T06:03:16.045Z"
+  },
+  "__v": 0
+}]

@@ -68,7 +68,6 @@ export default {
   },
   getConversationByRoomId: async (req, res) => {
     try {
-      console.log('test')
       const { roomId } = req.params;
       const room = await ChatRoomModel.getChatRoomByRoomId(roomId)
       if (!room) {
@@ -116,7 +115,6 @@ export default {
     try {
       const currentLoggedUser = req.userId;
       const rooms = await ChatRoomModel.getAllRoomsByUser(currentLoggedUser);
-      // console.log(rooms)
       return res.status(200).json({ success: true, rooms });
     } catch (error) {
       console.log(error)
