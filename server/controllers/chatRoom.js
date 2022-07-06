@@ -42,7 +42,7 @@ export default {
       };
       const currentLoggedUser = req.userId;
       const post = await ChatMessageModel.createPostInChatRoom(roomId, messagePayload, currentLoggedUser);
-      global.io.sockets.in(roomId).emit('new message', { message: post });
+      global.io.sockets.to(roomId).emit('new message', { message: post });
       return res.status(200).json({ success: true, post });
     } catch (error) {
       console.log(error)
@@ -79,7 +79,7 @@ export default {
       const users = await UserModel.getUserByIds(room.userIds);
       const options = {
         page: parseInt(req.query.page) || 0,
-        limit: parseInt(req.query.limit) || 10,
+        limit: parseInt(req.query.limit) || 50,
       };
       const conversation = await ChatMessageModel.getConversationByRoomId(roomId, options);
       return res.status(200).json({

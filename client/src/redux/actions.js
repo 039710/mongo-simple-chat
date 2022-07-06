@@ -1,8 +1,4 @@
 const axios = require('axios');
-const expand = {
-  users: '_expand=users',
-  rooms: '_expand=rooms',
-}
 const API = axios.create({
   baseURL: 'http://localhost:3000',
   timeout: 1000,
@@ -11,7 +7,6 @@ const API = axios.create({
 
 
 export const fetchMessages = (roomId,token) => {
-  console.log('token',token)
   return async dispatch => {
     dispatch({
       type: 'SET_MESSAGES',
@@ -41,19 +36,19 @@ export const addMessage = (data) => {
 export const fetchRooms = (userId, token) => {
   return async dispatch => {
     const response = await API.get('/room/user/' + userId, { headers: { 'Authorization': 'Bearer ' + token } });
-    dispatch({
+    await dispatch({
       type: 'SET_ROOMS',
       payload: response.data.rooms
     });
     if (response.data.rooms.length > 0) {
-      dispatch({
+      await dispatch({
         type: 'SET_CURRENT_ROOM',
         payload: {
           _id: response.data.rooms[response.data.rooms.length - 1]._id,
           name : response.data.rooms[response.data.rooms.length - 1].name
         }
       })
-      dispatch(fetchMessages(response.data.rooms[response.data.rooms.length - 1]._id,token));
+      await dispatch(fetchMessages(response.data.rooms[response.data.rooms.length - 1]._id,token));
     }
   }
 }
@@ -70,16 +65,14 @@ export const fetchUser = (userId) => {
 
 export const postMessage = (currentRoom,message,token) => {
   return async dispatch => {
-    const response = await API.post('/room/'+currentRoom+'/message',{
+    await API.post('/room/'+currentRoom+'/message',{
       messageText: message
       },{
         headers: {
           Authorization: `Bearer ${token}`
         }
       });
-    const {post} = response.data
-    dispatch(addMessage(post))
-    // dispatch(fetchMessages(message.roomsId));
+    // const {post} = response.data
   }
 }
 

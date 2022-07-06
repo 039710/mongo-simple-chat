@@ -77,21 +77,34 @@ global.io.on('connection', (client)=>{
       userId: userId,
       roomId: roomId,
     });
+    console.log('new identity')
   });
   // subscribe person to chat & other user as well
-  client.on("subscribe", ({roomId, userId},otherUserId = "") =>{
+  client.on("subscribe", (roomId,otherUserId = "") =>{
     subscribeOtherUser(roomId, otherUserId);
-    const user = users.find(user => user.userId === userId);
-    if(user){
-      user.roomId = roomId;
-    }
+    console.log(roomId)
     const totalUsers = users.filter(user => user.roomId === roomId);
-    console.log('total users',totalUsers.length);
+    console.log('total users :',totalUsers.length);
     client.join(roomId);
+    client.to(roomId).emit("all users", totalUsers);
+    client.to(roomId).emit("user joined", {
+      signal: client.id,
+      callerID: client.id,
+    })
   });
   // mute a chat room
-  client.on("unsubscribe", (room) => {
-    client.leave(room);
+  client.on("unsubscribe", ({roomId,userId}) => {
+    // remove user from room
+    users = users.filter(user=> user.userId !== userId)
+    client.leave(roomId);
+  });
+
+  client.on("sending signal",payload =>{
+    client.to(payload.userToSignal).emit('user joined', { signal: payload.signal, callerID: payload.callerID });
+  })
+
+  client.on("returning signal", payload => {
+    client.to(payload.callerID).emit('receiving returned signal', { signal: payload.signal, id: socket.id });
   });
 })
 /** Listen on provided port, on all network interfaces. */
